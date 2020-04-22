@@ -26,9 +26,8 @@ search a@(c:cs) (Node k v xs ys zs) | c == k     = (if cs /= [] then (search cs 
 -- Dado una clave [k], un valor v y un TTree, agrega un par (clave, valor) a un arbol.
 -- Si la clave ya esta en el arbol, actualiza su valor
 insert :: Ord k => [k] -> v -> TTree k v -> TTree k v
-insert (c:cs) n E = case cs of
-                        [] -> Leaf c n
-                        otherwise -> Node c Nothing E (insert cs n E) E
+insert (c:cs) n E = if cs == [] then Leaf c n
+                    else Node c Nothing E (insert cs n E) E
 insert a@(c:cs) n (Leaf k v) | c == k     = case cs of
                                                 [] -> Leaf k n
                                                 otherwise -> Node k (Just v) E (insert cs n E) E
@@ -49,28 +48,28 @@ y = insert "cosc" 6 t
 u = insert "cosd" 7 y
 i = insert "cosde" 8 u
 
-mergeMaximoHijo :: TTree k v -> TTree k v
-mergeMaximoHijo nodo@(Node k v xs ys zs) = if ys == E then (Node k v xs (maximoHijo xs) zs)
-                                                      else (Node k v xs ys zs)
-    where maximoHijo xs@(Node _ _ _ _ zs) = case zs of
-                                                E -> xs
-                                                Leaf _ _ -> zs
-                                                otherwise -> maximoHijo zs
+-- mergeMaximoHijo :: TTree k v -> TTree k v
+-- mergeMaximoHijo nodo@(Node k v xs ys zs) = if ys == E then (Node k v xs (maximoHijo xs) zs)
+--                                                       else (Node k v xs ys zs)
+--     where maximoHijo xs@(Node _ _ _ _ zs) = case zs of
+--                                                 E -> xs
+--                                                 Leaf _ _ -> zs
+--                                                 otherwise -> maximoHijo zs
 
-delete :: Ord k => [k] -> TTree k v -> TTree k v
-delete _ E = E
-delete (c:cs) (Leaf k v) | c == k    = case cs of
-                                        [] -> E
-                                        otherwise -> Leaf k v
-                         | otherwise = Leaf k v
--- delete [c] (Node k v xs ys zs) 
-delete a@(c:cs) (Node k v xs ys zs) | c < k       = Node k v (delete a xs) ys zs
-                                    | c > k       = Node k v xs ys (delete a zs)
-                                    | otherwise   = case cs of                   
-                                                        [] -> case zs of
-                                                                E -> Node k Nothing xs ys zs
-                                                                Node k v xs ys zs -> 
-                                                        otherwise -> delete cs ys
+-- delete :: Ord k => [k] -> TTree k v -> TTree k v 
+-- delete _ E = E
+-- delete (c:cs) (Leaf k v) | c == k    = case cs of
+--                                         [] -> E
+--                                         otherwise -> Leaf k v
+--                          | otherwise = Leaf k v
+-- -- delete [c] (Node k v xs ys zs) 
+-- delete a@(c:cs) (Node k v xs ys zs) | c < k       = Node k v (delete a xs) ys zs
+--                                     | c > k       = Node k v xs ys (delete a zs)
+--                                     | otherwise   = case cs of
+--                                                         [] -> case zs of
+--                                                                 E -> Node k Nothing xs ys zs
+--                                                                 Node k v xs ys zs -> 
+--                                                         otherwise -> delete cs ys
 
 --Dado un arbol devuelve una lista ordenada con las claves del mismo.
 keys :: TTree k v -> [[k]]
