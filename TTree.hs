@@ -46,7 +46,7 @@ r = insert "cosb" 4 e
 t = insert "cosbe" 5 r
 y = insert "cosc" 6 t
 u = insert "cosd" 7 y
-i = insert "cosde" 10 u
+i = insert "cosde" 8 u
 
 -- mergeMaximoHijo :: TTree k v -> TTree k v
 -- mergeMaximoHijo nodo@(Node k v xs ys zs) = if ys == E then (Node k v xs (maximoHijo xs) zs)
