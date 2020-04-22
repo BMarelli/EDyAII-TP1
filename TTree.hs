@@ -46,7 +46,7 @@ r = insert "cosb" 4 e
 t = insert "cosbe" 5 r
 y = insert "cosc" 6 t
 u = insert "cosd" 7 y
-i = insert "cosde" 8 u
+i = insert "cosde" 10 u
 
 -- mergeMaximoHijo :: TTree k v -> TTree k v
 -- mergeMaximoHijo nodo@(Node k v xs ys zs) = if ys == E then (Node k v xs (maximoHijo xs) zs)
@@ -56,7 +56,7 @@ i = insert "cosde" 8 u
 --                                                 Leaf _ _ -> zs
 --                                                 otherwise -> maximoHijo zs
 
--- delete :: Ord k => [k] -> TTree k v -> TTree k v 
+-- delete :: Ord k => [k] -> TTree k v -> TTree k v
 -- delete _ E = E
 -- delete (c:cs) (Leaf k v) | c == k    = case cs of
 --                                         [] -> E
