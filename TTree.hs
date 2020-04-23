@@ -71,6 +71,16 @@ i = insert "cosde" 8 u
 --                                                                 Node k v xs ys zs -> 
 --                                                         otherwise -> delete cs ys
 
+delete :: Ord k => [k] -> TTree k v -> TTree k v
+delete _ E = E
+delete (c:cs) xs@(Leaf k v) = if cs == [] && c == k then E
+                              else xs
+delete clave@(c:cs) (Node k v xs ys zs) | c < k       = Node k v (delete clave xs) ys zs
+                                        | c > k       = Node k v xs ys (delete clave zs)
+                                        | otherwise   = case cs of
+                                                          [] -> Node k Nothing xs ys zs
+                                                          otherwise -> Node k v xs (delete cs ys) zs
+
 --Dado un arbol devuelve una lista ordenada con las claves del mismo.
 keys :: TTree k v -> [[k]]
 keys xs = keys_ xs []
