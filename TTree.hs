@@ -1,8 +1,9 @@
-module TP1 where
-
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FunctionalDependencies #-}
+
+module TP1 where
+
 
 data TTree k v = Node k (Maybe v) (TTree k v) (TTree k v) (TTree k v)
                 |Leaf k v
@@ -10,6 +11,11 @@ data TTree k v = Node k (Maybe v) (TTree k v) (TTree k v) (TTree k v)
                 deriving (Show, Eq)
 
 -- t = Node 'r' Nothing E (Node 'e' (Just 16) (Node 'a' Nothing E (Leaf 's' 1) E) (Node 'o' (Just 2) (Leaf 'd' 9) E (Leaf 's' 4)) E) (Node 's' Nothing E (Node 'i' (Just 4) (Leaf 'e' 8) (Leaf 'n' 7) E) E)
+
+
+-- Arbol vacio
+empty :: TTree k v
+empty = E
 
 -- Dado una clave [k] y un TTree, devuelve el valor asociado a la clave [k] 
 search :: Ord k => [k] -> TTree k v -> Maybe v 
@@ -89,3 +95,18 @@ keys xs = keys_ xs []
        keys_ (Node k v xs ys zs) cs  = case v of
                                        Just _ -> (keys_ xs cs) ++ (keys_ ys (cs ++ [k])) ++ (keys_ zs cs) ++ [cs ++ [k]]
                                        otherwise -> (keys_ xs cs) ++ (keys_ ys (cs ++ [k])) ++ (keys_ zs cs)
+
+
+class Dic k v d | d -> k v where
+      vacio :: d
+      insertar :: Ord k => k -> v -> d -> d
+      buscar :: Ord k =>  k -> d -> Maybe v
+      eliminar :: Ord k => k -> d -> d
+      claves :: Ord k => d -> [k]
+
+instance Ord k => Dic [k] v (TTree k v) where
+      vacio = empty
+      insertar = insert
+      buscar = search
+      eliminar = delete
+      claves = keys
