@@ -1,9 +1,12 @@
+-- Trabajo Practico 1 - Bautista Marelli - Francisco Alcacer
+
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FunctionalDependencies #-}
 
 module TP1 where
 
+import Data.Maybe
 
 data TTree k v = Node k (Maybe v) (TTree k v) (TTree k v) (TTree k v)
                 |Leaf k v
@@ -17,7 +20,7 @@ data TTree k v = Node k (Maybe v) (TTree k v) (TTree k v) (TTree k v)
 empty :: TTree k v
 empty = E
 
--- Dado una clave [k] y un TTree, devuelve el valor asociado a la clave [k] 
+-- Dado una clave [k] y un TTree, devuelve el valor asociado a la clave [k]
 search :: Ord k => [k] -> TTree k v -> Maybe v 
 search _ E = Nothing
 search [] _ = Nothing
@@ -45,6 +48,21 @@ insert a@(c:cs) n (Node k v xs ys zs) | c == k    = (if cs /= [] then Node k v x
                                       | c < k     = Node k v (insert a n xs) ys zs
                                       |otherwise  = Node k v xs ys (insert a n zs)
 
+-- Dado una clave y un TTree, devuelve el resultado de eliminar la clave del TTree en el caso de que la clave 
+-- este en el TTree
+delete :: Ord k => [k] -> TTree k v -> TTree k v
+delete _ E = E
+delete (c:cs) xs@(Leaf k v) = if cs == [] && c == k then E
+                              else xs
+delete clave@(c:cs) (Node k v xs ys zs) | c < k       = node2leaf (Node k v (delete clave xs) ys zs)
+                                        | c > k       = node2leaf (Node k v xs ys (delete clave zs))
+                                        | otherwise   = case cs of
+                                                          [] -> node2leaf (Node k Nothing xs ys zs)
+                                                          otherwise -> node2leaf (Node k v xs (delete cs ys) zs)
+    where node2leaf (Node k Nothing E E E)      = E
+          node2leaf (Node k (Just v) E E E)     = Leaf k v
+          node2leaf xs                          = xs
+
 q = insert "cose" 1 E
 w = insert "cosa" 2 q
 e = insert "cosi" 3 w
@@ -53,39 +71,6 @@ t = insert "cosbe" 5 r
 y = insert "cosc" 6 t
 u = insert "cosd" 7 y
 i = insert "cosde" 8 u
-
--- mergeMaximoHijo :: TTree k v -> TTree k v
--- mergeMaximoHijo nodo@(Node k v xs ys zs) = if ys == E then (Node k v xs (maximoHijo xs) zs)
---                                                       else (Node k v xs ys zs)
---     where maximoHijo xs@(Node _ _ _ _ zs) = case zs of
---                                                 E -> xs
---                                                 Leaf _ _ -> zs
---                                                 otherwise -> maximoHijo zs
-
--- delete :: Ord k => [k] -> TTree k v -> TTree k v
--- delete _ E = E
--- delete (c:cs) (Leaf k v) | c == k    = case cs of
---                                         [] -> E
---                                         otherwise -> Leaf k v
---                          | otherwise = Leaf k v
--- -- delete [c] (Node k v xs ys zs) 
--- delete a@(c:cs) (Node k v xs ys zs) | c < k       = Node k v (delete a xs) ys zs
---                                     | c > k       = Node k v xs ys (delete a zs)
---                                     | otherwise   = case cs of
---                                                         [] -> case zs of
---                                                                 E -> Node k Nothing xs ys zs
---                                                                 Node k v xs ys zs -> 
---                                                         otherwise -> delete cs ys
-
-delete :: Ord k => [k] -> TTree k v -> TTree k v
-delete _ E = E
-delete (c:cs) xs@(Leaf k v) = if cs == [] && c == k then E
-                              else xs
-delete clave@(c:cs) (Node k v xs ys zs) | c < k       = Node k v (delete clave xs) ys zs
-                                        | c > k       = Node k v xs ys (delete clave zs)
-                                        | otherwise   = case cs of
-                                                          [] -> Node k Nothing xs ys zs
-                                                          otherwise -> Node k v xs (delete cs ys) zs
 
 --Dado un arbol devuelve una lista ordenada con las claves del mismo.
 keys :: TTree k v -> [[k]]
