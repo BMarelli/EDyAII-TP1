@@ -12,10 +12,7 @@ data TTree k v = Node k (Maybe v) (TTree k v) (TTree k v) (TTree k v)
                 |Leaf k v
                 |E
                 deriving (Show, Eq)
-
--- t = Node 'r' Nothing E (Node 'e' (Just 16) (Node 'a' Nothing E (Leaf 's' 1) E) (Node 'o' (Just 2) (Leaf 'd' 9) E (Leaf 's' 4)) E) (Node 's' Nothing E (Node 'i' (Just 4) (Leaf 'e' 8) (Leaf 'n' 7) E) E)
-
-
+                
 -- Arbol vacio
 empty :: TTree k v
 empty = E
@@ -62,15 +59,6 @@ delete clave@(c:cs) (Node k v xs ys zs) | c < k       = node2leaf (Node k v (del
     where node2leaf (Node k Nothing E E E)      = E
           node2leaf (Node k (Just v) E E E)     = Leaf k v
           node2leaf xs                          = xs
-
-q = insert "cose" 1 E
-w = insert "cosa" 2 q
-e = insert "cosi" 3 w
-r = insert "cosb" 4 e
-t = insert "cosbe" 5 r
-y = insert "cosc" 6 t
-u = insert "cosd" 7 y
-i = insert "cosde" 8 u
 
 --Dado un arbol devuelve una lista ordenada con las claves del mismo.
 keys :: TTree k v -> [[k]]
