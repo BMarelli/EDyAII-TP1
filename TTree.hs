@@ -66,7 +66,7 @@ keys xs = keys_ xs []
  where keys_ E _ = []
        keys_ (Leaf k v) cs           = [cs ++ [k]]
        keys_ (Node k v xs ys zs) cs  = case v of
-                                       Just _ -> (keys_ xs cs) ++ (keys_ ys (cs ++ [k])) ++ (keys_ zs cs) ++ [cs ++ [k]]
+                                       Just _ -> (keys_ xs cs) ++ [cs ++ [k]] ++ (keys_ ys (cs ++ [k])) ++ (keys_ zs cs) ++ [cs ++ [k]]
                                        otherwise -> (keys_ xs cs) ++ (keys_ ys (cs ++ [k])) ++ (keys_ zs cs)
 
 
